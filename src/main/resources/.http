@@ -1,0 +1,7 @@
+### Test de mon endpoint AI
+POST http://localhost:8080/api/prompts
+Content-Type: application/json
+
+{
+    "query": "docker"
+    }
