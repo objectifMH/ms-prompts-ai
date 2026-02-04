@@ -14,6 +14,9 @@ public class GeminiService {
     }
 
     public String define(DefinePrompt definePrompt){
-        return this.chatClient.prompt(definePrompt.query()).call().content();
+        return this.chatClient.
+
+
+                prompt(definePrompt.query()).call().content();
     }
 }

@@ -1,0 +1,1 @@
+Explique-moi le concept de  {query}
