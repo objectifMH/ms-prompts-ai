@@ -2,7 +2,7 @@ spring:
   application:
     name: ms-prompts-ai
   ai:
-    google:
+#    google:
 #      genai:
 #        api-key: ${OPENAI_KEY_API_GEMINI}
 #        project-id: "mon-projet-prompts-ai"
