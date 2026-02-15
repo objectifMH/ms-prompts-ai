@@ -88,7 +88,7 @@ class PromptsControllerTest {
                 .expectBody(String.class)
                 .consumeWith(result -> {
                     String response = result.getResponseBody();
-                    //System.out.println("RÉPONSE : " + response);
+                    //System.out.println("RÉPONSE : " + response); chek
                     assertThat(response).isEqualTo("Une String est une chaîne de caractères en programmation.");
                 });
 
@@ -100,20 +100,5 @@ class PromptsControllerTest {
     @Test
     void roadmap() {
     }
-
-    @Test
-    void findTheUrl() {
-        // Un record se crée uniquement comme ça, sans setters
-        DefinePrompt monPrompt = new DefinePrompt("Java");
-
-        System.out.println("🚀 Envoi du record DefinePrompt : " + monPrompt);
-
-        this.webTestClient.post()
-                .uri("/prompts/define")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(monPrompt)
-                .exchange()
-                .expectStatus().is5xxServerError();
-        // On force l'erreur pour que WireMock nous affiche l'URL non trouvée
-    }
+    
 }
