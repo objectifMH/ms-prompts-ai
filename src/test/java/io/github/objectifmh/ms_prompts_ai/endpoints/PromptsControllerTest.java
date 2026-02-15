@@ -12,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -57,10 +58,7 @@ class PromptsControllerTest {
 
 
     @Test
-    void define() {
-
-//        stubFor(post(anyUrl()).willReturn(aResponse().withStatus(200)
-//                .withBody("Réponse").withHeader("Content-type", "text/plain")));
+    void define_shouldReturnAiResponse_whenQueryIsProvided() {
 
         // Given
         stubFor(post(urlPathEqualTo("/v1/chat/completions"))
@@ -68,13 +66,14 @@ class PromptsControllerTest {
                         .withStatus(200)
                         .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                         .withBody("""
-                                {
-                                    "choices": [{
-                                        "message": {
-                                            "content": "Veuillez fournir un terme à définir."
-                                        }
-                                    }]
-                                }
+                                 {
+                                                    "choices": [{
+                                                        "message": {
+                                                            "role": "assistant",
+                                                            "content": "Une String est une chaîne de caractères en programmation."
+                                                        }
+                                                    }]
+                                                }
                                 """)));
 
         // When & Then
@@ -86,11 +85,15 @@ class PromptsControllerTest {
                 .exchange()
                 .expectStatus()
                 .isOk()
-                .expectBody(String.class);
-//
-//        verify(exactly(1), postRequestedFor(urlPathEqualTo("/openai/v1/chat/completions")));
+                .expectBody(String.class)
+                .consumeWith(result -> {
+                    String response = result.getResponseBody();
+                    //System.out.println("RÉPONSE : " + response);
+                    assertThat(response).isEqualTo("Une String est une chaîne de caractères en programmation.");
+                });
 
-
+        // Then - Vérifie explicitement l'appel une fois :
+        verify(exactly(1), postRequestedFor(urlPathEqualTo("/v1/chat/completions")));
     }
 
 
