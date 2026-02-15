@@ -19,7 +19,6 @@ public class PromptsController {
 
     public PromptsController(PromptsService promptsService) {
         this.promptsService = promptsService;
-        System.out.println(" Initialisation du constructeur : ");
     }
 
     @RequestMapping
@@ -33,7 +32,7 @@ public class PromptsController {
     }
 
     @PostMapping(path = "define")
-    public String define(@RequestBody DefinePrompt definePrompt){
+    public String define(@RequestBody DefinePrompt definePrompt) {
         System.out.println("Dans define");
         return this.promptsService.define(definePrompt);
     }

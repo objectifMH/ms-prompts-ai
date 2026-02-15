@@ -1,24 +1,34 @@
 package io.github.objectifmh.ms_prompts_ai.endpoints;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
 @AutoConfigureWireMock(port = 0)
+@ActiveProfiles("test")
 class PromptsControllerTest {
 
     @Autowired
     private WebTestClient webTestClient;
+
+    @Autowired
+    private Environment env;
+
+    @Autowired
+    private WireMockServer wiremockServer;
 
     @Test
     void hello() {
@@ -45,25 +55,62 @@ class PromptsControllerTest {
                 });
     }
 
+
     @Test
     void define() {
 
-//        stubFor(
-//                post(urlEqualTo("/"))
-//        )
+//        stubFor(post(anyUrl()).willReturn(aResponse().withStatus(200)
+//                .withBody("Réponse").withHeader("Content-type", "text/plain")));
 
+        // Given
+        stubFor(post(urlPathEqualTo("/v1/chat/completions"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                        .withBody("""
+                                {
+                                    "choices": [{
+                                        "message": {
+                                            "content": "Veuillez fournir un terme à définir."
+                                        }
+                                    }]
+                                }
+                                """)));
+
+        // When & Then
         this.webTestClient.post()
                 .uri("/prompts/define")
 
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(new DefinePrompt("docker"))
+                .bodyValue(new DefinePrompt("String"))
                 .exchange()
                 .expectStatus()
                 .isOk()
                 .expectBody(String.class);
+//
+//        verify(exactly(1), postRequestedFor(urlPathEqualTo("/openai/v1/chat/completions")));
+
+
     }
+
 
     @Test
     void roadmap() {
+    }
+
+    @Test
+    void findTheUrl() {
+        // Un record se crée uniquement comme ça, sans setters
+        DefinePrompt monPrompt = new DefinePrompt("Java");
+
+        System.out.println("🚀 Envoi du record DefinePrompt : " + monPrompt);
+
+        this.webTestClient.post()
+                .uri("/prompts/define")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(monPrompt)
+                .exchange()
+                .expectStatus().is5xxServerError();
+        // On force l'erreur pour que WireMock nous affiche l'URL non trouvée
     }
 }
