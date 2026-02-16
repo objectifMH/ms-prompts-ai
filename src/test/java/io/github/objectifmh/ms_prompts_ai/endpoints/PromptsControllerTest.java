@@ -107,7 +107,8 @@ class PromptsControllerTest {
                 });
 
         // Then - Vérifie explicitement l'appel une fois :
-        verify(exactly(1), postRequestedFor(urlPathEqualTo("/v1/chat/completions")));
+        verify(exactly(1), postRequestedFor(urlPathEqualTo("/v1/chat/completions"))
+                .withHeader("Authorization", matching("Bearer .*")));
     }
 
     @Test
