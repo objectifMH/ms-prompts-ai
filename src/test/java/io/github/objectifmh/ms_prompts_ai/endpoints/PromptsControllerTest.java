@@ -144,6 +144,38 @@ class PromptsControllerTest {
     }
 
     @Test
+    @DisplayName("Échoue quand l'API retourne une erreur de quota dépassé")
+    void define_shouldFail_whenApiQuotaExceeded() {
+        // Given
+        stubFor(post(urlPathEqualTo("/v1/chat/completions"))
+                .willReturn(aResponse()
+                        .withStatus(429)  // ← Too Many Requests
+                        .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                        .withBody("""
+                                {
+                                    "error": {
+                                        "message": "You exceeded your current quota",
+                                        "type": "insufficient_quota",
+                                        "code": "insufficient_quota"
+                                    }
+                                }
+                                """)));
+
+        // When & Then
+        webTestClient.post()
+                .uri("/prompts/define")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new DefinePrompt("test"))
+                .exchange()
+                .expectStatus().is5xxServerError();  // Spring AI propage l'erreur
+
+        // more than car au moins 1 appel (retry possible en cas d'erreur)
+        verify(moreThanOrExactly(1), postRequestedFor(urlPathEqualTo("/v1/chat/completions"))
+                .withRequestBody(containing("test")));
+
+    }
+
+    @Test
     void roadmap() {
     }
 
