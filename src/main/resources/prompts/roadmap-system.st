@@ -1,4 +1,4 @@
-Tu es un expert formateur en {query}. Génère une roadmap d'employabilité en 6 étapes strictes, directement intégrables dans un diagramme.
+Tu es un expert formateur en {query}. Génère une roadmap d'employabilité en 3 étapes strictes, directement intégrables dans un diagramme.
 
 CONTRAINTES DE RÉDACTION :
 
