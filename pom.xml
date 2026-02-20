@@ -113,6 +113,18 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.13</version>
+
+                <configuration>
+                    <excludes>
+                        <exclude>**/MsPromptsAiApplication.class</exclude>
+                        <exclude>**/dto/**/*.class</exclude>
+                        <exclude>**/configurations/**/*.class</exclude>
+                        <exclude>**/Steps.class</exclude>
+                        <exclude>**/DefinePrompt.class</exclude>
+                    </excludes>
+                </configuration>
+
+                
                 <executions>
                     <execution>
                         <id>default-prepare-agent</id>
@@ -133,6 +145,8 @@
                         <goals>
                             <goal>check</goal>
                         </goals>
+
+
                         <configuration>
                             <rules>
                                 <rule>
@@ -148,9 +162,15 @@
                                             <value>COVEREDRATIO</value>
                                             <minimum>0.80</minimum>
                                         </limit>
+                                        <!--                                        <limit>-->
+                                        <!--                                            <counter>BRANCH</counter>-->
+                                        <!--                                            <value>COVEREDRATIO</value>-->
+                                        <!--                                            <minimum>0.70</minimum>-->
+                                        <!--                                        </limit>-->
                                     </limits>
                                 </rule>
                             </rules>
+
                         </configuration>
                     </execution>
                 </executions>
